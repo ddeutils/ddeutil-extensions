@@ -1,0 +1,141 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ddeutil-vendors"
+description = "Data Developer & Engineer Vendors Utility Objects"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {text = "MIT"}
+authors = [{ name = "ddeutils", email = "korawich.anu@gmail.com" }]
+keywords = ['data', 'vendors', 'utility']
+classifiers = [
+    "Topic :: Utilities",
+    "Natural Language :: English",
+    "Development Status :: 3 - Alpha",
+    # "Development Status :: 4 - Beta",
+    # "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.9.13"
+dependencies = [
+    "fmtutil",
+    "ddeutil-io",
+    "python-dotenv==1.0.1",
+    "schedule==1.2.2",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/ddeutils/ddeutil-vendors/"
+"Source Code" = "https://github.com/ddeutils/ddeutil-vendors/"
+
+[project.optional-dependencies]
+test = [
+    "sqlalchemy==2.0.31",
+    # SFTP
+    "paramiko==3.4.0",
+    "sshtunnel==0.4.0",
+    # AWS Client
+    "boto3==1.34.151",
+    # Open files
+    "fsspec==2024.6.1",
+    # Polars
+    "polars==0.20.31",
+    "pyarrow==17.0.0",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "ddeutil.vendors.__about__.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.shelf.version]
+version = "./src/ddeutil/vendors/__about__.py"
+changelog = "CHANGELOG.md"
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+concurrency = ["thread", "multiprocessing"]
+source = ["ddeutil", "tests"]
+omit = ["scripts/"]
+
+[tool.coverage.report]
+exclude_lines = ["raise NotImplementedError"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+console_output_style = "count"
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+]
+filterwarnings = ["error"]
+log_cli = true
+log_cli_level = "DEBUG"
+log_cli_format = "%(asctime)s [%(levelname)7s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.black]
+line-length = 80
+target-version = ['py39']
+exclude = """
+(
+    /(
+        \\.git
+        | \\.eggs
+        | \\.__pycache__
+        | \\.idea
+        | \\.ruff_cache
+        | \\.mypy_cache
+        | \\.pytest_cache
+        | \\.venv
+        | build
+        | dist
+        | venv
+    )/
+)
+"""
+
+[tool.ruff]
+line-length = 80
+exclude = [
+    "__pypackages__",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "build",
+    "dist",
+    "venv",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401",
+    "F403",
+]

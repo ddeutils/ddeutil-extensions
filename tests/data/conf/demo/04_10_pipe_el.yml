@@ -1,0 +1,91 @@
+# Case:
+#   Extract data from a Source Database to Azure Data Lake.
+#
+#   * The source table should dynamic picking with schema and table names
+#   * Incremental loading with ``run_date`` parameter
+# ---
+ingest_postgres_to_minio:
+  type: pipeline.Pipeline
+  desc: Extract and download data from Postgres to Azure Data Lake
+  params:
+    run-date:
+      type: datetime
+    source:
+      type: str
+    target:
+      type: str
+  jobs:
+    extract-load:
+      stages:
+        - name: "Extract & Load Postgres to Delta"
+          id: extract-load
+          task: tasks/el-postgres-to-delta@polars
+          args:
+            source:
+              conn: ${{ params.source }}
+              query: |
+                select *
+                from  ${{ params.source.schema }}.${{ param.source.table }}
+                where update_date = '${{ param.run_date.fmt('%Y%m%d') }}'
+            conversion:
+              customer_id: id
+              customer_name: name
+              customer_register_date: register_date
+              customer_revenue: revenue
+            sink:
+              conn: ${{ target.conn }}
+              endpoint: /persisted/${{ target.schema }}/${{ target.path }}
+
+
+# Case:
+#   Extract data on the Local File System from CSV to Parquet.
+ingest_csv_to_parquet:
+  type: pipeline.Pipeline
+  params:
+    run-date: datetime
+    source: str
+    sink: str
+  jobs:
+    extract-load:
+      stages:
+        - name: "Extract & Load Local System"
+          id: extract-load
+          task: tasks/el-csv-to-parquet@polars-dir
+          args:
+            source: ${{ params.source }}
+            sink: ${{ params.sink }}
+
+# Case:
+#   Extract data on the Local File System from CSV to Target.
+ingest_multiple_system:
+  type: pipeline.Pipeline
+  params:
+    source: str
+    target: str
+  jobs:
+    multiple-system:
+      strategy:
+        matrix:
+          table: ['customer', 'sales']
+          system: ['csv']
+          partition: [1, 2, 3]
+        exclude:
+          - table: customer
+            system: csv
+            partition: 1
+          - table: sales
+            partition: 3
+        include:
+          - table: customer
+            system: csv
+            partition: 4
+      stages:
+        - name: Extract & Load Multi-System
+          task: tasks/el-${{ matrix.system }}-to-delta@polars
+          args:
+            source:
+              conn: ${{ params.source }}
+              table: ${{ matrix.table }}
+            sink:
+              conn: ${{ params.target }}
+              endpoint: /raw/${{ matrix.table }}_${{ matrix.system }}
