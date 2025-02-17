@@ -10,7 +10,6 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar
 
-from ddeutil.io.models.conn import Conn as ConnModel
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.functional_validators import field_validator
 from pydantic.types import SecretStr
@@ -18,6 +17,7 @@ from typing_extensions import Self
 
 from .__types import DictData, TupleStr
 from .loader import Loader
+from .models.conn import Conn as ConnModel
 
 EXCLUDED_EXTRAS: TupleStr = (
     "type",
@@ -151,7 +151,7 @@ class SFTP(Conn):
     dialect: Literal["sftp"] = "sftp"
 
     def __client(self):
-        from .vendors.sftp import WrapSFTP
+        from .plugins.sftp import WrapSFTP
 
         return WrapSFTP(
             host=self.host,

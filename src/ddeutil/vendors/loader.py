@@ -173,7 +173,7 @@ def map_params(value: Any, params: dict[str, Any]) -> Any:
         return value.replace(found.group(0), str(getter))
 
     # NOTE:
-    #   If type of getter caller does not formatting, it will return origin
+    #   If type of getter caller does not format, it will return origin
     #   value.
     if value.replace(found.group(0), "") != "":
         raise ValueError(
