@@ -1,4 +1,4 @@
-# Vendors Data Computing
+# Vendors
 
 [![size](https://img.shields.io/github/languages/code-size/ddeutils/ddeutil-vendors)](https://github.com/ddeutils/ddeutil-vendors)
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-vendors)](https://github.com/ddeutils/ddeutil-vendors/blob/main/LICENSE)
@@ -15,6 +15,12 @@ pip install -U ddeutil-vendor
 ```
 
 ## Features
+
+This vendors package provides 3 main components:
+
+- Plug-in tasks that use with the Workflow
+- Connection and Dataset interface objects
+- Schema models
 
 ### Connection
 
@@ -49,8 +55,15 @@ ds_postgres_customer_tbl:
 ```
 
 ```python
-from ddeutil.vendors.vendors.pg import PostgresTbl
+from ddeutil.vendors.plugins.pg import PostgresTbl
 
 dataset = PostgresTbl.from_loader(name='ds_postgres_customer_tbl', externals={})
 assert dataset.exists()
 ```
+
+## :speech_balloon: Contribute
+
+I do not think this project will go around the world because it has specific propose,
+and you can create by your coding without this project dependency for long term
+solution. So, on this time, you can open [the GitHub issue on this project :raised_hands:](https://github.com/ddeutils/ddeutil-vendors/issues)
+for fix bug or request new feature if you want it.
