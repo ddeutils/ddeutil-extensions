@@ -3,7 +3,8 @@ import pickle
 from typing import Any
 
 import pytest
-from ddeutil.workflow.vendors.__dict import MetaDict, complies_variable_syntax
+
+from src.ddeutil.vendors.__dict import MetaDict, complies_variable_syntax
 
 
 @pytest.fixture
