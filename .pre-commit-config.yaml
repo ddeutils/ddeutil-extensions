@@ -3,14 +3,14 @@ default_language_version:
     python: python3.9
 
 ci:
-#    skip: [pytest-check, commit-msg-hook]
-    skip: [commit-msg-hook]
+    skip:
+        - shelf-commit-msg
     autofix_commit_msg: |
-        🚧 [pre-commit.ci] auto fixes from pre-commit.com hooks
+        :construction: build: [pre-commit.ci] auto fixes from pre-commit.com hooks
     autofix_prs: true
     autoupdate_schedule: weekly
     autoupdate_commit_msg: |
-        🚧 [pre-commit.ci] pre-commit autoupdate
+        :construction: build: [pre-commit.ci] pre-commit autoupdate
 
 repos:
 -   repo: https://github.com/asottile/pyupgrade
@@ -18,38 +18,38 @@ repos:
     hooks:
     -   id: pyupgrade
         args: ["--py39-plus", "--keep-runtime-typing"]
-        stages: [commit]
+        stages: [pre-commit]
 
 -   repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
     -   id: black
-        stages: [commit]
+        stages: [pre-commit]
 
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev:  v0.4.2
     hooks:
     -   id: ruff
         args: ["--fix"]
-        stages: [commit]
+        stages: [pre-commit]
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev:  v4.5.0
     hooks:
     -   id: fix-byte-order-marker
-        stages: [commit]
+        stages: [pre-commit]
     -   id: trailing-whitespace
-        stages: [commit]
+        stages: [pre-commit]
     -   id: end-of-file-fixer
-        stages: [commit]
+        stages: [pre-commit]
     -   id: check-yaml
         args: ["--unsafe"]
-        stages: [commit]
+        stages: [pre-commit]
     -   id: check-toml
-        stages: [commit]
+        stages: [pre-commit]
 
 -   repo: https://github.com/korawica/clishelf
-    rev: v0.2.4
+    rev: v0.2.19
     hooks:
     -   id: shelf-commit-msg
 
