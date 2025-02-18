@@ -4,7 +4,8 @@
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-vendors)](https://github.com/ddeutils/ddeutil-vendors/blob/main/LICENSE)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A **vendors plugin functions and objects**.
+A **vendors functions and objects** which provides all plug-ins and objects that
+use for data processing and transformation.
 
 ## :round_pushpin: Installation
 
@@ -14,7 +15,7 @@ This package does not publish with this name yet.
 pip install -U ddeutil-vendors
 ```
 
-## Features
+## :rocket: Features
 
 This vendors package provides 3 main components:
 
