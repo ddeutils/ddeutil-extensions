@@ -18,8 +18,9 @@ except ImportError:
         "Please install polars package\n\t\t$ pip install polars"
     ) from None
 
+from src.ddeutil.vendors.dataset import FlDataFrame, TblDataFrame
+
 from ..__types import TupleStr
-from src.ddeutil.vendors.__dataset import FlDataFrame, TblDataFrame
 
 EXCLUDED_EXTRAS: TupleStr = ("type",)
 OBJ_FMTS: FormatterGroupType = make_group({"datetime": Datetime})

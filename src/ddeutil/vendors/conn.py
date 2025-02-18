@@ -10,13 +10,13 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar
 
+from ddeutil.workflow import Loader
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.functional_validators import field_validator
 from pydantic.types import SecretStr
 from typing_extensions import Self
 
 from .__types import DictData, TupleStr
-from .loader import Loader
 from .models.conn import Conn as ConnModel
 
 EXCLUDED_EXTRAS: TupleStr = (
@@ -46,7 +46,7 @@ class BaseConn(BaseModel):
     def from_dict(cls, values: DictData) -> Self:
         """Construct Connection Model from dict data. This construct is
         different with ``.model_validate()`` because it will prepare the values
-        before using it if the data dose not have 'url'.
+        before using it if the data do not have 'url'.
 
         :param values: A dict data that use to construct this model.
         """
@@ -83,7 +83,7 @@ class BaseConn(BaseModel):
         """Construct Connection with Loader object with specific config name.
 
         :param name: A config name.
-        :param externals: A external data that want to adding to extras.
+        :param externals: An external data that want to add to extras.
         """
         loader: Loader = Loader(name, externals=externals)
         # NOTE: Validate the config type match with current connection model
@@ -151,7 +151,7 @@ class SFTP(Conn):
     dialect: Literal["sftp"] = "sftp"
 
     def __client(self):
-        from .plugins.sftp import WrapSFTP
+        from .datasets.sftp import WrapSFTP
 
         return WrapSFTP(
             host=self.host,

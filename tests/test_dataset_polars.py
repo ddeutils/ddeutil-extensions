@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-import ddeutil.vendors.plugins.pl as pl_ds
+import ddeutil.vendors.datasets.pl as pl_ds
 import polars as pl
 
 

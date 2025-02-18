@@ -8,14 +8,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Any, Optional
 
+from ddeutil.workflow import Loader
 from fmtutil import Datetime, FormatterGroupType, make_group
 from fmtutil.utils import escape_fmt_group
 from pydantic import BaseModel, Field
 from typing_extensions import Self
 
-from ..__types import DictData, TupleStr
-from ..conn import SubclassConn
-from ..loader import Loader
+from .__types import DictData, TupleStr
+from .conn import SubclassConn
 
 EXCLUDED_EXTRAS: TupleStr = ("type",)
 OBJ_FMTS: FormatterGroupType = make_group({"datetime": Datetime})

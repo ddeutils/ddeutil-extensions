@@ -6,12 +6,12 @@
 
 A **vendors plugin functions and objects**.
 
-## Installation
+## :round_pushpin: Installation
 
 This package does not publish with this name yet.
 
 ```shell
-pip install -U ddeutil-vendor
+pip install -U ddeutil-vendors
 ```
 
 ## Features
@@ -55,7 +55,7 @@ ds_postgres_customer_tbl:
 ```
 
 ```python
-from ddeutil.vendors.plugins.pg import PostgresTbl
+from ddeutil.vendors.datasets.pg import PostgresTbl
 
 dataset = PostgresTbl.from_loader(name='ds_postgres_customer_tbl', externals={})
 assert dataset.exists()
