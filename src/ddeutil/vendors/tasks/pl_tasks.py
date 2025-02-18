@@ -6,48 +6,27 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from pathlib import Path
 
 from ddeutil.workflow.hook import tag
 
 logger = logging.getLogger("ddeutil.workflow")
 
-__all__: tuple[str, ...] = (
-    "dummy_task_polars_dir",
-    "dummy_task_polars_dir_scan",
-)
+__all__: tuple[str, ...] = ("task_polars_count",)
 
 
-@tag("polars-dir", alias="el-csv-to-parquet")
-def dummy_task_polars_dir(
+@tag("polars", alias="count-parquet")
+def task_polars_count(
     source: str,
-    sink: str,
-    conversion: dict[str, Any] | None = None,
+    condition: str | None = None,
 ) -> dict[str, int]:
-    logger.info("[HOOK]: el-csv-to-parquet@polars-dir")
-    logger.debug("... Start EL for CSV to Parquet with Polars Engine")
-    logger.debug(f"... Reading data from {source}")
+    logger.info("[HOOK]: count-parquet@polars")
+    logger.debug("... Start Count Records with Polars Engine")
 
-    conversion: dict[str, Any] = conversion or {}
-    if conversion:
-        logger.debug("... Start Schema Conversion ...")
-    logger.debug(f"... Writing data to {sink}")
-    return {"records": 1}
+    source_path: Path = Path(source)
+    logger.debug(f"... Reading data from {source_path!r}")
 
+    if condition:
+        logger.info(f"... Filter data with {condition!r}")
 
-@tag("polars-dir-scan", alias="el-csv-to-parquet")
-def dummy_task_polars_dir_scan(
-    source: str,
-    sink: str,
-    conversion: dict[str, Any] | None = None,
-) -> dict[str, int]:
-    logger.info("[HOOK]: el-csv-to-parquet@polars-dir-scan")
-    logger.debug("... Start EL for CSV to Parquet with Polars Engine")
-    logger.debug("... ---")
-    logger.debug(f"... Reading data from {source}")
-
-    conversion: dict[str, Any] = conversion or {}
-    if conversion:
-        logger.debug("... Start Schema Conversion ...")
-    logger.debug(f"... Writing data to {sink}")
     return {"records": 1}
