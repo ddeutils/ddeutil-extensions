@@ -3,12 +3,12 @@ requires = [ "setuptools>=68.0" ]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ddeutil-vendors"
-description = "Vendors functions and objects"
+name = "ddeutil-extensions"
+description = "Extension functions and objects"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "MIT"}
 authors = [{ name = "ddeutils", email = "korawich.anu@gmail.com" }]
-keywords = ['vendors', 'utility']
+keywords = ['extensions', 'utility']
 classifiers = [
     "Topic :: Utilities",
     "Natural Language :: English",
@@ -31,15 +31,15 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/ddeutils/ddeutil-vendors/"
-"Source Code" = "https://github.com/ddeutils/ddeutil-vendors/"
+Homepage = "https://github.com/ddeutils/ddeutil-extensions/"
+"Source Code" = "https://github.com/ddeutils/ddeutil-extensions/"
 
 [project.optional-dependencies]
 test = [
     "python-dotenv==1.0.1",
     "sqlalchemy==2.0.31",
     "fsspec==2024.6.1",
-    "ddeutil-vendors[polars,sftp,aws]",
+    "ddeutil-extensions[polars,sftp,aws]",
 ]
 polars = [
     "polars==0.20.31",
@@ -54,13 +54,13 @@ aws = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "ddeutil.vendors.__about__.__version__"}
+version = {attr = "ddeutil.extensions.__about__.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.shelf.version]
-version = "./src/ddeutil/vendors/__about__.py"
+version = "./src/ddeutil/extensions/__about__.py"
 changelog = "CHANGELOG.md"
 
 [tool.coverage.run]
@@ -68,7 +68,6 @@ branch = true
 relative_files = true
 concurrency = ["thread", "multiprocessing"]
 source = ["ddeutil", "tests"]
-omit = ["scripts/"]
 
 [tool.coverage.report]
 exclude_lines = ["raise NotImplementedError"]

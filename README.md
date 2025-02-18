@@ -1,23 +1,23 @@
-# Vendors
+# Extensions
 
-[![size](https://img.shields.io/github/languages/code-size/ddeutils/ddeutil-vendors)](https://github.com/ddeutils/ddeutil-vendors)
-[![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-vendors)](https://github.com/ddeutils/ddeutil-vendors/blob/main/LICENSE)
+[![size](https://img.shields.io/github/languages/code-size/ddeutils/ddeutil-extensions)](https://github.com/ddeutils/ddeutil-extensions)
+[![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-extensions)](https://github.com/ddeutils/ddeutil-extensions/blob/main/LICENSE)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A **vendors functions and objects** which provides all plug-ins and objects that
-use for data processing and transformation.
+An **extensions functions and objects** which provides all plug-ins and objects
+that use for data processing and transformation.
 
 ## :round_pushpin: Installation
 
 This package does not publish with this name yet.
 
 ```shell
-pip install -U ddeutil-vendors
+pip install -U ddeutil-extensions
 ```
 
 ## :rocket: Features
 
-This vendors package provides 3 main components:
+This extensions package provides 3 main components:
 
 - Plug-in tasks that use with the Workflow
 - Connection and Dataset interface objects
@@ -34,7 +34,7 @@ conn_postgres_data:
 ```
 
 ```python
-from ddeutil.vendors.conn import Conn
+from ddeutil.extensions.conn import Conn
 
 conn = Conn.from_loader(name='conn_postgres_data', externals={})
 assert conn.ping()
@@ -43,7 +43,7 @@ assert conn.ping()
 ### Dataset
 
 The dataset is defined any objects on the connection. This feature was implemented
-on `/vendors` because it has a lot of tools that can interact with any data systems
+on `/extensions` because it has a lot of tools that can interact with any data systems
 in the data tool stacks.
 
 ```yaml
@@ -56,7 +56,7 @@ ds_postgres_customer_tbl:
 ```
 
 ```python
-from ddeutil.vendors.datasets.pg import PostgresTbl
+from ddeutil.extensions.datasets.pg import PostgresTbl
 
 dataset = PostgresTbl.from_loader(name='ds_postgres_customer_tbl', externals={})
 assert dataset.exists()
@@ -66,5 +66,5 @@ assert dataset.exists()
 
 I do not think this project will go around the world because it has specific propose,
 and you can create by your coding without this project dependency for long term
-solution. So, on this time, you can open [the GitHub issue on this project :raised_hands:](https://github.com/ddeutils/ddeutil-vendors/issues)
+solution. So, on this time, you can open [the GitHub issue on this project :raised_hands:](https://github.com/ddeutils/ddeutil-extensions/issues)
 for fix bug or request new feature if you want it.
