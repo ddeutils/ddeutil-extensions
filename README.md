@@ -9,8 +9,6 @@ that use for data processing and transformation.
 
 ## :round_pushpin: Installation
 
-This package does not publish with this name yet.
-
 ```shell
 pip install -U ddeutil-extensions
 ```
@@ -19,7 +17,7 @@ pip install -U ddeutil-extensions
 
 This extensions package provides 3 main components:
 
-- Plug-in tasks that use with the Workflow
+- Plug-in the extension tasks that use with the [Workflow](https://github.com/ddeutils/ddeutil-extensions)
 - Connection and Dataset interface objects
 - Schema models
 
