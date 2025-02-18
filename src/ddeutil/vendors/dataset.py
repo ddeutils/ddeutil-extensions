@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Optional, Union
 
 from ddeutil.workflow import Loader
 from fmtutil import Datetime, FormatterGroupType, make_group
@@ -14,10 +14,9 @@ from fmtutil.utils import escape_fmt_group
 from pydantic import BaseModel, Field
 from typing_extensions import Self
 
-from .__types import DictData, TupleStr
+from .__types import DictData
 from .conn import SubclassConn
 
-EXCLUDED_EXTRAS: TupleStr = ("type",)
 OBJ_FMTS: FormatterGroupType = make_group({"datetime": Datetime})
 
 
@@ -53,7 +52,7 @@ class BaseDataset(BaseModel):
         filter_data: DictData = {
             k: loader.data.pop(k)
             for k in loader.data.copy()
-            if k not in cls.model_fields and k not in EXCLUDED_EXTRAS
+            if k not in cls.model_fields and k not in ("type",)
         }
 
         if "conn" not in loader.data:
@@ -84,14 +83,15 @@ class BaseDataset(BaseModel):
 
 
 class Dataset(BaseDataset):
+    """Dataset model."""
 
     def exists(self) -> bool:
         raise NotImplementedError("Object exists does not implement")
 
     def format_object(
         self,
-        _object: str | None = None,
-        dt: str | datetime | None = None,
+        _object: Optional[str] = None,
+        dt: Optional[Union[str, datetime]] = None,
     ) -> str:
         """Format the object value that implement datetime"""
         if dt is None:

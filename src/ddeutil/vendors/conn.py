@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar
@@ -16,13 +17,44 @@ from pydantic.functional_validators import field_validator
 from pydantic.types import SecretStr
 from typing_extensions import Self
 
-from .__types import DictData, TupleStr
+from .__types import DictData
 from .models.conn import Conn as ConnModel
 
-EXCLUDED_EXTRAS: TupleStr = (
-    "type",
-    "url",
-)
+
+class SSHCred(BaseModel):
+    """SSH Credential model."""
+
+    ssh_host: str
+    ssh_user: str
+    ssh_password: Optional[SecretStr] = Field(default=None)
+    ssh_private_key: Optional[str] = Field(default=None)
+    ssh_private_key_pwd: Optional[SecretStr] = Field(default=None)
+    ssh_port: int = Field(default=22)
+
+
+class AWSCred(BaseModel):
+    """AWS Credential model."""
+
+    aws_access_key: str
+    aws_secret_access_key: SecretStr
+    region: str = Field(default="ap-southeast-1")
+    role_arn: Optional[str] = Field(default=None)
+    role_name: Optional[str] = Field(default=None)
+    mfa_serial: Optional[str] = Field(default=None)
+
+
+class AzureSPCred(BaseModel):
+    """Azure service principle model"""
+
+    tenant: str
+    client_id: str
+    secret_id: SecretStr
+
+
+class GoogleJsonCred(BaseModel):
+    """Google JSON Credential model."""
+
+    google_json_path: str
 
 
 class BaseConn(BaseModel):
@@ -30,7 +62,6 @@ class BaseConn(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    # NOTE: This is fields
     dialect: str
     host: Optional[str] = None
     port: Optional[int] = None
@@ -49,12 +80,19 @@ class BaseConn(BaseModel):
         before using it if the data do not have 'url'.
 
         :param values: A dict data that use to construct this model.
+
+        :rtype: Self
         """
         # NOTE: filter out the fields of this model.
         filter_data: DictData = {
             k: values.pop(k)
             for k in values.copy()
-            if k not in cls.model_fields and k not in EXCLUDED_EXTRAS
+            if k not in cls.model_fields
+            and k
+            not in (
+                "type",
+                "url",
+            )
         }
         if "url" in values:
             url: ConnModel = ConnModel.from_url(values.pop("url"))
@@ -84,6 +122,8 @@ class BaseConn(BaseModel):
 
         :param name: A config name.
         :param externals: An external data that want to add to extras.
+
+        :rtype: Self
         """
         loader: Loader = Loader(name, externals=externals)
         # NOTE: Validate the config type match with current connection model
@@ -98,13 +138,18 @@ class BaseConn(BaseModel):
 
     @field_validator("endpoint")
     def __prepare_slash(cls, value: str) -> str:
-        """Prepare slash character that map double form URL model loading."""
+        """Prepare slash character that map double form URL model loading.
+
+        :param value:
+
+        :rtype: str
+        """
         if value.startswith("//"):
             return value[1:]
         return value
 
 
-class Conn(BaseConn):
+class Conn(BaseConn, ABC):
     """Conn (Connection) Model that implement any necessary methods. This object
     should be the base for abstraction to any connection model object.
     """
@@ -118,14 +163,17 @@ class Conn(BaseConn):
             f"/{self.endpoint}"
         )
 
+    @abstractmethod
     def ping(self) -> bool:
         """Ping the connection that able to use with this field value."""
         raise NotImplementedError("Ping does not implement")
 
+    @abstractmethod
     def glob(self, pattern: str) -> Iterator[Any]:
         """Return a list of object from the endpoint of this connection."""
         raise NotImplementedError("Glob does not implement")
 
+    @abstractmethod
     def find_object(self, _object: str):
         raise NotImplementedError("Glob does not implement")
 
@@ -167,9 +215,13 @@ class SFTP(Conn):
     def glob(self, pattern: str) -> Iterator[str]:
         yield from self.__client().walk(pattern=pattern)
 
+    def find_object(self, _object: str): ...
+
 
 class Db(Conn):
-    """RDBMS System Connection"""
+    """RDBMS System Connection which use the `sqlalchemy` package for create
+    connection object.
+    """
 
     def ping(self) -> bool:
         from sqlalchemy import create_engine
@@ -188,53 +240,35 @@ class Db(Conn):
             ),
             execution_options={},
         )
+
         try:
-            return engine.connect()
+            engine.connect()
         except OperationalError as err:
             logging.warning(str(err))
             return False
+
+        return True
+
+    def glob(self, pattern: str) -> Iterator[Any]: ...
+
+    def find_object(self, _object: str): ...
 
 
 class SQLite(Db):
     dialect: Literal["sqlite"]
 
 
-class ODBC(Conn): ...
-
-
 class Doc(Conn):
-    """No SQL System Connection"""
+    """NoSQL Connection."""
+
+    def ping(self) -> bool: ...
+
+    def glob(self, pattern: str) -> Iterator[Any]: ...
+
+    def find_object(self, _object: str): ...
 
 
 class Mongo(Doc): ...
-
-
-class SSHCred(BaseModel):
-    ssh_host: str
-    ssh_user: str
-    ssh_password: Optional[SecretStr] = Field(default=None)
-    ssh_private_key: Optional[str] = Field(default=None)
-    ssh_private_key_pwd: Optional[SecretStr] = Field(default=None)
-    ssh_port: int = Field(default=22)
-
-
-class S3Cred(BaseModel):
-    aws_access_key: str
-    aws_secret_access_key: SecretStr
-    region: str = Field(default="ap-southeast-1")
-    role_arn: Optional[str] = Field(default=None)
-    role_name: Optional[str] = Field(default=None)
-    mfa_serial: Optional[str] = Field(default=None)
-
-
-class AZServPrinCred(BaseModel):
-    tenant: str
-    client_id: str
-    secret_id: SecretStr
-
-
-class GoogleCred(BaseModel):
-    google_json_path: str
 
 
 SubclassConn = TypeVar("SubclassConn", bound=Conn)
