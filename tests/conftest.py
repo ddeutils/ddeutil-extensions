@@ -4,11 +4,6 @@ import pytest
 
 from .utils import dotenv_setting, initial_sqlite
 
-collect_ignore: list[str] = [
-    "vendors",
-    "test_base_schedule",
-]
-
 dotenv_setting()
 initial_sqlite()
 
