@@ -34,10 +34,9 @@
 - :toolbox: build: update clishelf config.
 - :toolbox: build: update publish workflow support oidc.
 - :toolbox: build: add publish workflow.
-- :toolbox: build: refactore pyproject file before publish.
+- :toolbox: build: refactor pyproject file before publish.
 - :toolbox: build: re-build project structure.
 
 ### :postbox: Dependencies
 
 - :pushpin: deps: update sqlalchemy to 2.0.38.
-
