@@ -13,7 +13,7 @@ for your specific requirements (Yeah, it just inherits Sub-Class from `BaseModel
 ## Data Types
 
 ```python
-from ddeutil.vendors.models.dtype import StringType
+from ddeutil.extensions.models.dtype import StringType
 
 dtype = StringType()
 assert dtype.type == "string"
@@ -23,7 +23,7 @@ assert dtype.max_length == -1
 ## Constraints
 
 ```python
-from ddeutil.vendors.models.const import Pk
+from ddeutil.extensions.models.const import Pk
 
 const = Pk(of="foo", cols=["bar", "baz"])
 assert const.name == "foo_bar_baz_pk"
@@ -33,14 +33,14 @@ assert const.cols == ["bar", "baz"]
 ## Datasets
 
 ```python
-from ddeutil.vendors.models.datasets import Col, Tbl
+from ddeutil.extensions.models.datasets import Col, Tbl
 
 tbl = Tbl(
-  name="table_foo",
-  features=[
-    Col(name="id", dtype="integer primary key"),
-    Col(name="foo", dtype="varchar( 10 )"),
-  ],
+    name="table_foo",
+    features=[
+        Col(name="id", dtype="integer primary key"),
+        Col(name="foo", dtype="varchar( 10 )"),
+    ],
 )
 assert tbl.name == "table_foo"
 assert tbl.features[0].name == "id"
@@ -55,8 +55,7 @@ If I have some catalog config, it easy to pass this config to model object.
 
 ```python
 import yaml
-from ddeutil.vendors.models.datasets import Scm
-
+from ddeutil.extensions.models.datasets import Scm
 
 config = yaml.safe_load("""
 name: "warehouse"

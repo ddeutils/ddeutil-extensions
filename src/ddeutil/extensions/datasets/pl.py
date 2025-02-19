@@ -18,7 +18,7 @@ except ImportError:
         "Please install polars package\n\t\t$ pip install polars"
     ) from None
 
-from src.ddeutil.vendors.dataset import FlDataFrame, TblDataFrame
+from src.ddeutil.extensions.dataset import FlDataFrame, TblDataFrame
 
 from ..__types import TupleStr
 

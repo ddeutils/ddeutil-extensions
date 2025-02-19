@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.action as act
+import ddeutil.extensions.models.action as act
 import pytest
 
 from .utils import param

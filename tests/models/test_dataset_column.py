@@ -1,5 +1,5 @@
-import ddeutil.vendors.models.datasets.col as col
-import ddeutil.vendors.models.dtype as dtype
+import ddeutil.extensions.models.datasets.col as col
+import ddeutil.extensions.models.dtype as dtype
 
 
 def test_base_column_init():

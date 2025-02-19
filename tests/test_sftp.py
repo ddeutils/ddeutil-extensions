@@ -1,6 +1,6 @@
 import os
 
-from src.ddeutil.vendors.datasets.sftp import WrapSFTP
+from src.ddeutil.extensions.datasets.sftp import WrapSFTP
 
 
 def test_sftp():

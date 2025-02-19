@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.__base as base
+import ddeutil.extensions.models.__base as base
 import pytest
 
 

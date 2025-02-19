@@ -2,9 +2,9 @@ import datetime
 from unittest import mock
 from zoneinfo import ZoneInfo
 
-import ddeutil.vendors.models.__enums as enum
-import ddeutil.vendors.models.lineage as lineages
-from ddeutil.vendors.models.lineage import TZ
+import ddeutil.extensions.models.__enums as enum
+import ddeutil.extensions.models.lineage as lineages
+from ddeutil.extensions.models.lineage import TZ
 
 
 @mock.patch("ddeutil.vendors.models.lineage.datetime", wraps=datetime.datetime)

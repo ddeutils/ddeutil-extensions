@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.const as const
+import ddeutil.extensions.models.const as const
 
 
 def test_pk_init():

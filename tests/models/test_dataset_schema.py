@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.datasets.db as db
+import ddeutil.extensions.models.datasets.db as db
 
 
 def test_schema_parser():

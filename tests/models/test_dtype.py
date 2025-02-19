@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.dtype as dtype
+import ddeutil.extensions.models.dtype as dtype
 
 
 def test_char_init():

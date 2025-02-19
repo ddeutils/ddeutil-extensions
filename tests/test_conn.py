@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.ddeutil.vendors.conn import (
+from src.ddeutil.extensions.conn import (
     SFTP,
     FlSys,
     SQLite,

@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.__types as tp
+import ddeutil.extensions.models.__types as tp
 
 
 def test_db_url():

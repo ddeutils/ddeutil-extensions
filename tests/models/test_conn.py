@@ -1,4 +1,4 @@
-import ddeutil.vendors.models.conn as conn
+import ddeutil.extensions.models.conn as conn
 
 
 def test_conn_from_url():

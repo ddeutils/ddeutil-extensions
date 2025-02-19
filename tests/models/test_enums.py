@@ -1,4 +1,4 @@
-from ddeutil.vendors.models.__enums import Loading, Status
+from ddeutil.extensions.models.__enums import Loading, Status
 
 
 def test_status_failed():
