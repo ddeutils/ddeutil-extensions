@@ -38,19 +38,19 @@ Homepage = "https://github.com/ddeutils/ddeutil-extensions/"
 test = [
     "python-dotenv==1.0.1",
     "sqlalchemy==2.0.38",
-    "fsspec==2024.6.1",
+    "fsspec==2025.2.0",
     "ddeutil-extensions[polars,sftp,aws]",
 ]
 polars = [
-    "polars==0.20.31",
-    "pyarrow==17.0.0",
+    "polars==1.24.0",
+    "pyarrow==19.0.1",
 ]
 sftp = [
-    "paramiko==3.4.0",
+    "paramiko==3.5.1",
     "sshtunnel==0.4.0",
 ]
 aws = [
-    "boto3==1.34.151",
+    "boto3==1.37.6",
 ]
 
 [tool.setuptools.dynamic]
