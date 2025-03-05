@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 from uuid import uuid4
 
 try:
@@ -41,7 +41,7 @@ __all__: tuple[str, ...] = ("task_polars_count",)
 @tag("polars", alias="count-parquet")
 def task_polars_count(
     source: str,
-    condition: str | None = None,
+    condition: Optional[str] = None,
 ) -> dict[str, int]:
     logger.info("[HOOK]: count-parquet@polars")
     logger.debug("... Start Count Records with Polars Engine")
@@ -66,7 +66,7 @@ def polars_dtype():
 def csv_to_parquet_dir(
     source: str,
     sink: str,
-    conversion: dict[str, Any] | None = None,
+    conversion: Optional[dict[str, Any]] = None,
 ) -> dict[str, int]:
     """Extract Load data from CSV to Parquet file.
 
@@ -104,7 +104,7 @@ def csv_to_parquet_dir(
 def csv_to_parquet_dir_scan(
     source: str,
     sink: str,
-    conversion: dict[str, Any] | None = None,
+    conversion: Optional[dict[str, Any]] = None,
 ) -> dict[str, int]:
     print("Start EL for CSV to Parquet with Polars Engine")
     print("---")
