@@ -13,7 +13,7 @@ ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key
 ## Start Local Services
 
 I create the Docker compose file for provisioning all services that you want to
-testing connection.
+test connection.
 
 ```shell
 docker compose -f .\.container\docker-compose.yml --env-file .\.env up -d
