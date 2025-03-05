@@ -38,7 +38,7 @@ Homepage = "https://github.com/ddeutils/ddeutil-extensions/"
 test = [
     "python-dotenv==1.0.1",
     "sqlalchemy==2.0.38",
-    "fsspec==2024.6.1",
+    "fsspec==2025.2.0",
     "ddeutil-extensions[polars,sftp,aws]",
 ]
 polars = [
