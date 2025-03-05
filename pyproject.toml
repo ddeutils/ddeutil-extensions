@@ -43,7 +43,7 @@ test = [
 ]
 polars = [
     "polars==0.20.31",
-    "pyarrow==17.0.0",
+    "pyarrow==19.0.1",
 ]
 sftp = [
     "paramiko==3.4.0",
