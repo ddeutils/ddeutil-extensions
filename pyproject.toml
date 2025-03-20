@@ -39,7 +39,10 @@ test = [
     "python-dotenv==1.0.1",
     "sqlalchemy==2.0.38",
     "fsspec==2025.2.0",
-    "ddeutil-extensions[polars,sftp,aws,deltalake]",
+    "ddeutil-extensions[dataframe,sftp,aws,deltalake]",
+]
+dataframe = [
+    "ddeutil-extensions[polars,pandas,duckdb]",
 ]
 polars = [
     "polars==1.24.0",
@@ -56,6 +59,9 @@ aws = [
 ]
 deltalake = [
     "deltalake==0.25.4",
+]
+duckdb = [
+    "duckdb==1.2.1",
 ]
 
 [tool.setuptools.dynamic]
