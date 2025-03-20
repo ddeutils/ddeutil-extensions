@@ -1,0 +1,12 @@
+wf-test-pandas-tasks:
+  type: Workflow
+  params:
+    source: str
+  jobs:
+    first-job:
+      stages:
+        - name: "Test task"
+          id: xlsx-to-fabric
+          uses: tasks/xlsx-to-fabric@pandas
+          with:
+            source: ${{ source }}

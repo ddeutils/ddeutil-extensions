@@ -3,4 +3,5 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
+from .pd_tasks import *
 from .pl_tasks import *
