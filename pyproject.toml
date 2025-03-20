@@ -26,7 +26,7 @@ classifiers = [
 requires-python = ">=3.9.13"
 dependencies = [
     "fmtutil",
-    "ddeutil-workflow",
+    "ddeutil-workflow==0.0.37",
 ]
 dynamic = ["version"]
 
@@ -39,11 +39,13 @@ test = [
     "python-dotenv==1.0.1",
     "sqlalchemy==2.0.38",
     "fsspec==2025.2.0",
-    "ddeutil-extensions[polars,sftp,aws]",
+    "ddeutil-extensions[polars,sftp,aws,deltalake]",
 ]
 polars = [
     "polars==1.24.0",
-    "pyarrow==19.0.1",
+]
+pandas = [
+    "pandas==2.2.3",
 ]
 sftp = [
     "paramiko==3.5.1",
@@ -51,6 +53,9 @@ sftp = [
 ]
 aws = [
     "boto3==1.37.6",
+]
+deltalake = [
+    "deltalake==0.25.4",
 ]
 
 [tool.setuptools.dynamic]

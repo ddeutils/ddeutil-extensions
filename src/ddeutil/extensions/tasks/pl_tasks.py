@@ -29,7 +29,7 @@ except ImportError:
         "Please install pyarrow if you want to use any relate task"
     ) from None
 
-from ddeutil.workflow.hook import tag
+from ddeutil.workflow.caller import tag
 
 from ..datasets.pl import PolarsCsv, PolarsParq
 
