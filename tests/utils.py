@@ -19,6 +19,10 @@ def dotenv_setting() -> None:
         env_str: str = dedent(
             f"""
             ROOT_PATH={OUTSIDE_PATH.resolve()}
+            WORKFLOW_CORE_ROOT_PATH={OUTSIDE_PATH.resolve()}
+            WORKFLOW_CORE_CONF_PATH=tests/data
+            WORKFLOW_CORE_REGISTRY=src.ddeutil.extensions
+
             SFTP_HOST='50.100.200.123'
             SFTP_USER='bastion'
             SFTP_PASSWORD='P@ssW0rd'
