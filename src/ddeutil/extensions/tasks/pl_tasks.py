@@ -23,7 +23,7 @@ try:
     import pyarrow as pa
     import pyarrow.parquet as pq
 
-    logging.debug(f"Polars version: {pa.__version__}")
+    logging.debug(f"PyArrow version: {pa.__version__}")
 except ImportError:
     raise ImportError(
         "Please install pyarrow if you want to use any relate task"
