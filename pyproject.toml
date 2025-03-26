@@ -25,8 +25,8 @@ classifiers = [
 ]
 requires-python = ">=3.9.13"
 dependencies = [
-    "fmtutil",
-    "ddeutil-workflow==0.0.37",
+    "fmtutil>=1.0.15",
+    "ddeutil-workflow==0.0.39",
 ]
 dynamic = ["version"]
 
