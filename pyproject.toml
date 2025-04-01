@@ -42,7 +42,7 @@ dataframe = [
     "ddeutil-extensions[polars,pandas,duckdb]",
 ]
 polars = [
-    "polars==1.24.0",
+    "polars==1.26.0",
 ]
 pandas = [
     "pandas==2.2.3",
