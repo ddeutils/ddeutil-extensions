@@ -5,70 +5,92 @@
 # ------------------------------------------------------------------------------
 from __future__ import annotations
 
-import logging
+from functools import partial
 from pathlib import Path
 from typing import Any, Optional
 from uuid import uuid4
 
 try:
     import polars as pl
-
-    logging.debug(f"Polars version: {pl.__version__}")
 except ImportError:
     raise ImportError(
         "Please install polars if you want to use any relate task"
     ) from None
 
 try:
-    import pyarrow as pa
+    # import pyarrow as pa
     import pyarrow.parquet as pq
-
-    logging.debug(f"PyArrow version: {pa.__version__}")
 except ImportError:
     raise ImportError(
         "Please install pyarrow if you want to use any relate task"
     ) from None
 
-from ddeutil.workflow.caller import tag
+from ddeutil.workflow import Result
+from ddeutil.workflow.reusables import tag
 
+from ..__types import TupleStr
 from ..datasets.pl import PolarsCsv, PolarsParq
 
-logger = logging.getLogger("ddeutil.workflow")
+__all__: TupleStr = (
+    "local_count_parquet_task",
+    "local_count_csv_task",
+    "local_convert_csv_to_parquet",
+)
 
-__all__: tuple[str, ...] = ("task_polars_count",)
+
+POLARS_TAG = partial(tag, name="polars")
 
 
-@tag("polars", alias="count-parquet")
-def task_polars_count(
+@POLARS_TAG(alias="count-parquet")
+def local_count_parquet_task(
     source: str,
+    result: Result,
     condition: Optional[str] = None,
 ) -> dict[str, int]:
-    logger.info("[HOOK]: count-parquet@polars")
-    logger.debug("... Start Count Records with Polars Engine")
+    """"""
+    result.trace.info("[CALLER]: count-parquet@polars")
+    result.trace.debug("... Start Count Records with Polars Engine")
 
     source_path: Path = Path(source)
-    logger.debug(f"... Reading data from {source_path!r}")
+    result.trace.debug(f"... Reading data from {source_path!r}")
 
     if condition:
-        logger.info(f"... Filter data with {condition!r}")
+        result.trace.info(f"... Filter data with {condition!r}")
 
     return {"records": 1}
 
 
-def polars_dtype():
+@POLARS_TAG(alias="count-csv")
+def local_count_csv_task(
+    source: str,
+    result: Result,
+):
+    """Count the target CSV file on the local.
+
+    :param source:
+    :param result: (Result)
+
+    :rtype:
+    """
+    result.trace.info(f"Start Counting the CSV file: {source!r}")
+    return {"records": 1}
+
+
+def polars_dtype() -> dict[str, Any]:
+    """Return mapping of the Polars datatype and Python variable type."""
     return {
         "str": pl.Utf8,
         "int": pl.Int32,
     }
 
 
-@tag("polars-dir", alias="el-csv-to-parquet")
-def csv_to_parquet_dir(
+@POLARS_TAG(alias="convert-csv-to-parquet")
+def local_convert_csv_to_parquet(
     source: str,
     sink: str,
     conversion: Optional[dict[str, Any]] = None,
 ) -> dict[str, int]:
-    """Extract Load data from CSV to Parquet file.
+    """Covert data from CSV to Parquet file.
 
     :param source:
     :param sink:

@@ -24,7 +24,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.9.13"
-dependencies = [ "ddeutil-workflow==0.0.61" ]
+dependencies = [
+    "fmtutil==1.0.15",
+    "ddeutil-workflow==0.0.61"
+]
 dynamic = ["version"]
 
 [project.urls]

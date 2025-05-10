@@ -1,4 +1,5 @@
 import logging
+from functools import partial
 from typing import Optional
 
 try:
@@ -11,12 +12,15 @@ except ImportError:
     ) from None
 
 from ddeutil.workflow import Result, config
-from ddeutil.workflow.caller import tag
+from ddeutil.workflow.reusables import tag
+
+from ..__types import DictData
 
 logger = logging.getLogger("ddeutil.workflow")
+PANDAS_TAG = partial(tag, name="pandas")
 
 
-@tag("pandas", alias="xlsx-to-fabric-with-deltalake")
+@PANDAS_TAG(alias="xlsx-to-fabric-with-deltalake")
 def task_pandas_excel_to_fabric_with_deltalake(
     source: str,
     target: str,
@@ -34,7 +38,7 @@ def task_pandas_excel_to_fabric_with_deltalake(
         "... [CALLER]: Loading xlsx file via Pandas Dataframe API"
     )
 
-    df = pd.read_excel(
+    df: pd.DataFrame = pd.read_excel(
         # NOTE: dest_path/file.xlsx
         config.root_path / source,
         header=header,
@@ -63,13 +67,13 @@ def task_pandas_excel_to_fabric_with_deltalake(
     return {"records": 1}
 
 
-@tag("pandas", alias="fabric-describe")
+@PANDAS_TAG(alias="fabric-describe")
 def task_pandas_fabric_describe(
-    source: str,
-    token: str,
-):
+    source: str, token: str, result: Result
+) -> DictData:
     from deltalake import DeltaTable
 
+    result.trace.info("Start Describe Microsoft Fabric.")
     table_path: str = f"abfss://xxxxx/flats.Lakehouse/Tables/{source}"
     storage_options = {"bearer_token": token, "use_fabric_endpoint": "true"}
     dt = DeltaTable(table_path, storage_options=storage_options)
