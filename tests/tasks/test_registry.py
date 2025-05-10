@@ -1,4 +1,4 @@
-from ddeutil.workflow.caller import make_registry
+from ddeutil.workflow.reusables import make_registry
 
 
 def test_make_registry():
