@@ -55,7 +55,7 @@ aws = [
     "boto3==1.37.6",
 ]
 deltalake = [
-    "deltalake==0.25.4",
+    "deltalake==0.25.5",
 ]
 duckdb = [
     "duckdb==1.2.2",
