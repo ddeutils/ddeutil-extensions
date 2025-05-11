@@ -1,0 +1,21 @@
+wf-test-polars-tasks:
+  type: Workflow
+  params:
+    source:
+      desc: "A source path of local data source."
+      type: str
+    target:
+      desc: "A target path of local data source."
+      type: str
+  jobs:
+    csv-job:
+      stages:
+        - name: "Count CSV"
+          id: count-csv
+          uses: tasks/count-csv@polars
+          with:
+            source: ${{ params.source }}
+
+        - name: "Load CSV to Parquet"
+          id: load-csv-to-parquet
+          echo: "Start Load CSV to Parquet stage."

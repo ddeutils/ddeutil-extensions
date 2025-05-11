@@ -64,16 +64,25 @@ def local_count_parquet_task(
 def local_count_csv_task(
     source: str,
     result: Result,
+    limit: int = 5,
 ):
     """Count the target CSV file on the local.
 
     :param source:
     :param result: (Result)
+    :param limit: (int)
 
     :rtype:
     """
-    result.trace.info(f"Start Counting the CSV file: {source!r}")
-    return {"records": 1}
+    source_path: Path = Path(source)
+    result.trace.info(
+        f"Start Counting the CSV file||=> Source Path: {source_path.resolve()}"
+        f"||=> Exists or Not: {source_path.exists()}"
+    )
+
+    df: pl.DataFrame = pl.read_csv(source)
+    result.trace.info(f"Display: {df.limit(limit)}")
+    return {"records": len(df)}
 
 
 def polars_dtype() -> dict[str, Any]:

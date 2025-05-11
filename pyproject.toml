@@ -63,6 +63,10 @@ deltalake = [
 duckdb = [
     "duckdb==1.2.2",
 ]
+restapi = [
+    "requests==2.32.3",
+    "httpx==0.28.1",
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "ddeutil.extensions.__about__.__version__"}

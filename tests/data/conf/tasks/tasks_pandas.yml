@@ -1,7 +1,14 @@
 wf-test-pandas-tasks:
   type: Workflow
+  params:
+    source:
+      desc: "A source path of local data source."
+      type: str
+    target:
+      desc: "A target path of local data source."
+      type: str
   jobs:
-    first-job:
+    fabric-job:
       stages:
         - name: "Test task"
           id: xlsx-to-fabric-deltalake

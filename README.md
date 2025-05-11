@@ -4,14 +4,8 @@
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-extensions)](https://github.com/ddeutils/ddeutil-extensions/blob/main/LICENSE)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-An **extensions functions and objects** which provides all plug-ins and objects
-that use for data processing and transformation.
-
-**This Extension Focus:**
-
-- Data Transform function with DataFrame API like _Polars_, _Pandas_, or _Duckdb_
-- Connection interface like SFTP, Database, No-SQL system, or Cloud services
-- Model Datasets
+An **Extension Tasks** which provides all plug-ins and objects
+that use for Data _Ingestion_, _Processing_, _Transformation_, and _Quality_.
 
 ## :round_pushpin: Installation
 
@@ -21,50 +15,13 @@ pip install -U ddeutil-extensions
 
 ## :rocket: Features
 
-This extensions package provides 3 main components:
+**This Extension Focus:**
 
-- Plug-in the extension tasks that use with the [Workflow](https://github.com/ddeutils/ddeutil-extensions)
-- Connection and Dataset interface objects
-- Schema models
+- Data Transform function with DataFrame API like _Polars_, _Pandas_, or _Duckdb_
+- Connection interface like _SFTP_, _Database_, _No-SQL_ system, or _Cloud services_
+- Model Datasets
 
-### Connection
-
-The connection for worker able to do anything.
-
-```yaml
-conn_postgres_data:
-  type: conn.Postgres
-  url: 'postgres//username:${ENV_PASS}@hostname:port/database?echo=True&time_out=10'
-```
-
-```python
-from ddeutil.extensions.conn import Conn
-
-conn = Conn.from_loader(name='conn_postgres_data', externals={})
-assert conn.ping()
-```
-
-### Dataset
-
-The dataset is defined any objects on the connection. This feature was implemented
-on `/extensions` because it has a lot of tools that can interact with any data systems
-in the data tool stacks.
-
-```yaml
-ds_postgres_customer_tbl:
-  type: dataset.PostgresTbl
-  conn: 'conn_postgres_data'
-  features:
-    id: serial primary key
-    name: varchar( 100 ) not null
-```
-
-```python
-from ddeutil.extensions.datasets.pg import PostgresTbl
-
-dataset = PostgresTbl.from_loader(name='ds_postgres_customer_tbl', externals={})
-assert dataset.exists()
-```
+## Examples
 
 ## :speech_balloon: Contribute
 
