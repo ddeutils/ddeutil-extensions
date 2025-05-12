@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) 2022 Korawich Anuttra. All rights reserved.
+# Licensed under the MIT License. See LICENSE in the project root for
+# license information.
+# ------------------------------------------------------------------------------
+from __future__ import annotations
+
 import asyncio
 import os
 import time
@@ -194,11 +201,3 @@ def jwt_auth():
     headers = {"Authorization": f"Bearer {jwt_token}"}
     response = requests.get(base_url, headers=headers)
     print("JWT Auth Response:", response.status_code, response.json())
-
-
-# Example usage of each authentication type
-api_key_auth()  # API Key Authentication
-bearer_token_auth()  # Bearer Token Authentication
-basic_auth()  # Basic Authentication
-oauth2_auth()  # OAuth 2.0 Authentication
-jwt_auth()  # JWT Authentication

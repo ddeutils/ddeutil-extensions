@@ -18,16 +18,6 @@ except ImportError:
         "Please install polars if you want to use any relate task"
     ) from None
 
-try:
-    import pyarrow.parquet as pq
-
-    # NOTE:
-    # import pyarrow as pa
-except ImportError:
-    raise ImportError(
-        "Please install pyarrow if you want to use any relate task"
-    ) from None
-
 from ddeutil.workflow import Result, tag
 
 from ..__types import DictData
@@ -38,7 +28,7 @@ POLARS_TAG = partial(tag, name="polars")
 
 
 @POLARS_TAG(alias="count-parquet")
-def local_count_parquet_task(
+def local_pl_count_parquet_task(
     source: str,
     result: Result,
     limit: int = 5,
@@ -61,11 +51,9 @@ def local_count_parquet_task(
         f"||=> Exists or Not: {source_path.exists()}||"
     )
 
-    df: pl.DataFrame = pl.read_parquet(source)
-
-    if condition:
-        df: pl.DataFrame = df.sql(f"SELECT * FROM self WHERE {condition}")
-
+    df: pl.DataFrame = pl.read_parquet(source).pipe(
+        pipe_condition, condition=condition
+    )
     result.trace.info(f"Display Polars DataFrame:||{df.limit(limit)}")
     record_count: int = len(df)
     result.trace.info(f"Records count: {record_count}")
@@ -106,7 +94,7 @@ def local_count_csv_task(
 
 
 @POLARS_TAG(alias="count-excel")
-def local_count_excel_task(
+def local_pl_count_excel_task(
     source: str,
     result: Result,
     limit: int = 5,
@@ -130,15 +118,19 @@ def local_count_excel_task(
         f"||=> Exists or Not: {source_path.exists()}||"
     )
 
-    df: pl.DataFrame = pl.read_excel(
-        source,
-        sheet_id=sheet_name,
-        engine="calamine",
-        has_header=True,
-        infer_schema_length=False,
-        drop_empty_rows=True,
-        drop_empty_cols=True,
-        raise_if_empty=False,
+    df: pl.DataFrame = (
+        pl.read_excel(
+            source,
+            sheet_id=sheet_name,
+            engine="calamine",
+            has_header=True,
+            infer_schema_length=False,
+            drop_empty_rows=True,
+            drop_empty_cols=True,
+            raise_if_empty=False,
+        )
+        .lazy()
+        .pipe(pipe_condition, condition=condition)
     )
 
     if condition:
@@ -151,7 +143,7 @@ def local_count_excel_task(
 
 
 @POLARS_TAG(alias="convert-excel-to-parquet")
-def local_convert_excel_to_parquet(
+def local_pl_convert_excel_to_parquet(
     source: str,
     sink: str,
     result: Result,
@@ -177,6 +169,13 @@ def local_convert_excel_to_parquet(
     :param partition_by: (list[str])
     :param limit: (int)
     """
+    try:
+        import pyarrow.parquet as pq
+    except ImportError:
+        raise ImportError(
+            "Please install pyarrow if you want to use any relate task"
+        ) from None
+
     source_path: Path = Path(source)
     sink_path: Path = Path(sink)
     result.trace.info(
@@ -240,11 +239,16 @@ def local_convert_excel_to_parquet(
         # NOTE: Write as `overwrite` mode.
         existing_data_behavior="delete_matching",
     )
-    return {"sick": sink, "records": row_records}
+    return {
+        "sick": sink,
+        "records": row_records,
+        # NOTE: Extract OrderedDict to dict.
+        "schema": {**lf.collect_schema()},
+    }
 
 
 @POLARS_TAG(alias="convert-csv-to-parquet")
-def local_convert_csv_to_parquet(
+def local_pl_convert_csv_to_parquet(
     source: str,
     sink: str,
     result: Result,
@@ -267,6 +271,13 @@ def local_convert_csv_to_parquet(
     :param partition_by: (list[str])
     :param limit: (int)
     """
+    try:
+        import pyarrow.parquet as pq
+    except ImportError:
+        raise ImportError(
+            "Please install pyarrow if you want to use any relate task"
+        ) from None
+
     source_path: Path = Path(source)
     sink_path: Path = Path(sink)
     result.trace.info(
@@ -302,7 +313,6 @@ def local_convert_csv_to_parquet(
     result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
     row_records: int = len(lf.collect())
     result.trace.info(f"Start Sink Data with {row_records} records.")
-
     pq.write_to_dataset(
         table=lf.collect().to_arrow(),
         root_path=sink,
@@ -312,4 +322,7 @@ def local_convert_csv_to_parquet(
         # NOTE: Write as `overwrite` mode.
         existing_data_behavior="delete_matching",
     )
-    return {"records": len(lf.collect())}
+    return {
+        "records": len(lf.collect()),
+        "schema": {**lf.collect_schema()},
+    }

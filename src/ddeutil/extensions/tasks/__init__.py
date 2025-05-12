@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
+from .tasks_api import *
 from .tasks_pd import *
 from .tasks_pl import *
-
-# from .tasks_api import *
