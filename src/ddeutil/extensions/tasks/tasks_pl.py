@@ -164,18 +164,21 @@ def local_convert_excel_to_parquet(
     result: Result,
     sheet_name: Optional[str] = None,
     condition: Optional[str] = None,
+    compression: str = "zstd",
     conversion: Optional[dict[str, Any]] = None,
     partition_by: Optional[list[str]] = None,
     limit: int = 3,
 ):
     """Covert data from Excel to Parquet file.
 
-    :param source: (str)
-    :param sink: (str)
-    :param result:
-    :param sheet_name:
+    :param source: (str) A source path.
+    :param sink: (str) A sink path.
+    :param result: (Result)
+    :param sheet_name: (str)
     :param conversion:
-    :param condition:
+    :param condition: (str)
+    :param compression: (str)
+    :param partition_by: (list[str])
     :param limit: (int)
     """
     source_path: Path = Path(source)
@@ -193,14 +196,15 @@ def local_convert_excel_to_parquet(
             sheet_id=sheet_name,
             engine="calamine",
             infer_schema_length=False,
-            include_file_paths="_src_path",
+            include_file_paths="_src",
         )
         .lazy()
         .pipe(pipe_condition, condition=condition)
     )
+
     result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
     row_records: int = len(lf.collect())
-    result.trace.info(f"Start Sick Data with {row_records} records.")
+    result.trace.info(f"Start Sink Data with {row_records} records.")
 
     # WARNING: This case do not work when we move to use `use_pyarrow` flag on
     #   native Polars.
@@ -214,16 +218,15 @@ def local_convert_excel_to_parquet(
     #         use_pyarrow=True,
     #         row_group_size=1000000,
     #         pyarrow_options={
-    #             # "partition_cols": partition_by or [],
-    #             "basename_template": f"{uuid4().hex}-{{i}}.snappy.parquet"
+    #             "partition_cols": partition_by or [],
     #         }
     #     )
     # )
     pq.write_to_dataset(
         table=lf.collect().to_arrow(),
         root_path=sink,
-        compression="zstd",
-        basename_template=f"{uuid4().hex}-{{i}}.zstd.parquet",
+        compression=compression,
+        basename_template=f"{uuid4().hex}-{{i}}.{compression}.parquet",
         # NOTE: Write as `overwrite` mode.
         existing_data_behavior="delete_matching",
     )
