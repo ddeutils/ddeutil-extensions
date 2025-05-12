@@ -31,6 +31,7 @@ from ddeutil.workflow import Result, tag
 
 from ..__types import DictData
 from .models import CountResult
+from .utils.utils_polars import pipe_condition
 
 POLARS_TAG = partial(tag, name="polars")
 
@@ -93,28 +94,27 @@ def local_count_csv_task(
         f"||=> Exists or Not: {source_path.exists()}||"
     )
 
-    df: pl.DataFrame = pl.read_csv(source)
-
-    if condition:
-        df: pl.DataFrame = df.sql(f"SELECT * FROM self WHERE {condition}")
-
-    result.trace.info(f"Display Polars DataFrame:||{df.limit(limit)}")
-    record_count: int = len(df)
+    lf: pl.LazyFrame = pl.scan_csv(
+        source,
+        infer_schema=False,
+    ).pipe(pipe_condition, condition=condition)
+    result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
+    record_count: int = len(lf.collect())
     result.trace.info(f"Records count: {record_count}")
     return {"records": record_count}
 
 
-@POLARS_TAG(alias="count-xlsx")
-def local_count_xlsx_task(
+@POLARS_TAG(alias="count-excel")
+def local_count_excel_task(
     source: str,
     result: Result,
     limit: int = 5,
     sheet_name: Optional[str] = None,
     condition: Optional[str] = None,
 ) -> CountResult:
-    """Count the target XLSX file on the local.
+    """Count the target Excel file on the local.
 
-    :param source: (str) A source path of a xlsx file.
+    :param source: (str) A source path of an Excel file.
     :param result: (Result)
     :param limit: (int)
     :param sheet_name: (str)
@@ -124,7 +124,7 @@ def local_count_xlsx_task(
     """
     source_path: Path = Path(source)
     result.trace.info(
-        f"Start Counting the XLSX file"
+        f"Start Counting the Excel file"
         f"||=> Source Path: {source_path.resolve()}"
         f"||=> Exists or Not: {source_path.exists()}||"
     )
@@ -134,6 +134,7 @@ def local_count_xlsx_task(
         sheet_id=sheet_name,
         engine="calamine",
         has_header=True,
+        infer_schema_length=False,
         drop_empty_rows=True,
         drop_empty_cols=True,
         raise_if_empty=False,
@@ -154,6 +155,79 @@ def polars_dtype() -> dict[str, Any]:
         "str": pl.Utf8,
         "int": pl.Int32,
     }
+
+
+@POLARS_TAG(alias="convert-excel-to-parquet")
+def local_convert_excel_to_parquet(
+    source: str,
+    sink: str,
+    result: Result,
+    sheet_name: Optional[str] = None,
+    condition: Optional[str] = None,
+    conversion: Optional[dict[str, Any]] = None,
+    partition_by: Optional[list[str]] = None,
+    limit: int = 3,
+):
+    """Covert data from Excel to Parquet file.
+
+    :param source: (str)
+    :param sink: (str)
+    :param result:
+    :param sheet_name:
+    :param conversion:
+    :param condition:
+    :param limit: (int)
+    """
+    source_path: Path = Path(source)
+    sink_path: Path = Path(sink)
+    result.trace.info(
+        f"Start Convert the CSV file"
+        f"||=> Source Path: {source_path.resolve()}"
+        f"||=> Exists or Not: {source_path.exists()}"
+        f"||To Parquet file"
+        f"||=> Sick Path: {sink_path.resolve()}||"
+    )
+    lf: pl.LazyFrame = (
+        pl.read_excel(
+            source,
+            sheet_id=sheet_name,
+            engine="calamine",
+            infer_schema_length=False,
+            include_file_paths="_src_path",
+        )
+        .lazy()
+        .pipe(pipe_condition, condition=condition)
+    )
+    result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
+    row_records: int = len(lf.collect())
+    result.trace.info(f"Start Sick Data with {row_records} records.")
+
+    # WARNING: This case do not work when we move to use `use_pyarrow` flag on
+    #   native Polars.
+    # ---
+    # (
+    #     lf
+    #     .collect()
+    #     .write_parquet(
+    #         file=sink_path,
+    #         compression="zstd",
+    #         use_pyarrow=True,
+    #         row_group_size=1000000,
+    #         pyarrow_options={
+    #             # "partition_cols": partition_by or [],
+    #             "basename_template": f"{uuid4().hex}-{{i}}.snappy.parquet"
+    #         }
+    #     )
+    # )
+    pq.write_to_dataset(
+        table=lf.collect().to_arrow(),
+        root_path=sink,
+        compression="zstd",
+        basename_template=f"{uuid4().hex}-{{i}}.zstd.parquet",
+        # NOTE: Write as `overwrite` mode.
+        existing_data_behavior="delete_matching",
+    )
+    return {"sick": sink, "records": row_records}
 
 
 @POLARS_TAG(alias="convert-csv-to-parquet")
@@ -180,7 +254,10 @@ def local_convert_csv_to_parquet(
         f"||=> Sick Path: {sink_path.resolve()}"
     )
 
-    lf: pl.LazyFrame = pl.scan_csv(source)
+    lf: pl.LazyFrame = pl.scan_csv(
+        source,
+        include_file_paths="_src_path",
+    )
 
     # STEP 02: Schema conversion on Polars DataFrame.
     conversion: dict[str, Any] = conversion or {}

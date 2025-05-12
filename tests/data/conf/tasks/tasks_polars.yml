@@ -4,8 +4,8 @@ wf-test-polars-tasks:
     source:
       desc: "A source path of local data source."
       type: str
-    target:
-      desc: "A target path of local data source."
+    sink:
+      desc: "A sink path of local data source."
       type: str
   jobs:
     csv-job:
@@ -24,15 +24,25 @@ wf-test-polars-tasks:
             source: ${{ params.source }}
             condition: "`First Name` == 'Roy'"
 
-        - name: "Load CSV to Parquet"
-          id: load-csv-to-parquet
-          echo: "Start Load CSV to Parquet stage."
-
-    xlsx-job:
-      stages:
-
-        - name: "Count XLSX"
-          id: count-xlsx
-          uses: tasks/count-xlsx@polars
+        - name: "Convert CSV to Parquet"
+          id: convert-csv-to-parquet
+          uses: tasks/convert-csv-to-parquet@polars
           with:
             source: ${{ params.source }}
+            sink: ${{ params.sink }}
+
+    excel-job:
+      stages:
+
+        - name: "Count excel"
+          id: count-excel
+          uses: tasks/count-excel@polars
+          with:
+            source: ${{ params.source }}
+
+        - name: "Convert Excel to Parquet"
+          id: convert-excel-to-parquet
+          uses: tasks/convert-excel-to-parquet@polars
+          with:
+            source: ${{ params.source }}
+            sink: ${{ params.sink }}
