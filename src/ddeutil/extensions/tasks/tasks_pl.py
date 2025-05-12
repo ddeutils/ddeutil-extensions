@@ -5,9 +5,10 @@
 # ------------------------------------------------------------------------------
 from __future__ import annotations
 
+from datetime import datetime
 from functools import partial
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 from uuid import uuid4
 
 try:
@@ -149,34 +150,29 @@ def local_count_excel_task(
     return {"records": record_count}
 
 
-def polars_dtype() -> dict[str, Any]:
-    """Return mapping of the Polars datatype and Python variable type."""
-    return {
-        "str": pl.Utf8,
-        "int": pl.Int32,
-    }
-
-
 @POLARS_TAG(alias="convert-excel-to-parquet")
 def local_convert_excel_to_parquet(
     source: str,
     sink: str,
     result: Result,
+    audit_date: datetime,
     sheet_name: Optional[str] = None,
+    conversion: Optional[str] = None,
     condition: Optional[str] = None,
     compression: str = "zstd",
-    conversion: Optional[dict[str, Any]] = None,
     partition_by: Optional[list[str]] = None,
     limit: int = 3,
-):
+) -> DictData:
     """Covert data from Excel to Parquet file.
 
     :param source: (str) A source path.
     :param sink: (str) A sink path.
     :param result: (Result)
-    :param sheet_name: (str)
-    :param conversion:
-    :param condition: (str)
+    :param audit_date: (datetime) An audit datetime.
+    :param sheet_name: (str) A sheet name that want to extract data from an
+        Excel file.
+    :param conversion: (str) A select conversion string SQL statement.
+    :param condition: (str) A condition SQL statement.
     :param compression: (str)
     :param partition_by: (list[str])
     :param limit: (int)
@@ -199,13 +195,25 @@ def local_convert_excel_to_parquet(
             include_file_paths="_src",
         )
         .lazy()
-        .pipe(pipe_condition, condition=condition)
+        .pipe(pipe_condition, condition=condition, conversion=conversion)
+        .with_columns(
+            # NOTE: Convert the audit date to integer for partitioning.
+            (
+                pl.lit(audit_date.strftime("%Y%m%d"))
+                .str.to_integer()
+                .alias("audit_date")
+            ),
+            # NOTE: Sprit only filename from path.
+            (pl.col("_src").str.split("/").list.last().alias("_src")),
+        )
     )
 
     result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
     row_records: int = len(lf.collect())
     result.trace.info(f"Start Sink Data with {row_records} records.")
 
+    # TODO: Change to use native polars that support write parquet with folder
+    #   refs issue: https://github.com/pola-rs/polars/issues/21899
     # WARNING: This case do not work when we move to use `use_pyarrow` flag on
     #   native Polars.
     # ---
@@ -222,10 +230,12 @@ def local_convert_excel_to_parquet(
     #         }
     #     )
     # )
+
     pq.write_to_dataset(
         table=lf.collect().to_arrow(),
         root_path=sink,
         compression=compression,
+        partition_cols=partition_by or [],
         basename_template=f"{uuid4().hex}-{{i}}.{compression}.parquet",
         # NOTE: Write as `overwrite` mode.
         existing_data_behavior="delete_matching",
@@ -238,14 +248,24 @@ def local_convert_csv_to_parquet(
     source: str,
     sink: str,
     result: Result,
-    conversion: Optional[dict[str, Any]] = None,
+    audit_date: datetime,
+    conversion: Optional[str] = None,
+    condition: Optional[str] = None,
+    compression: str = "zstd",
+    partition_by: Optional[list[str]] = None,
+    limit: int = 3,
 ) -> DictData:
     """Covert data from CSV to Parquet file.
 
-    :param source:
-    :param sink:
-    :param result:
-    :param conversion:
+    :param source: (str) A source path.
+    :param sink: (str) A sink path.
+    :param result: (Result)
+    :param audit_date: (datetime) An audit datetime.
+    :param conversion: (str) A select conversion string SQL statement.
+    :param condition: (str) A condition SQL statement.
+    :param compression: (str)
+    :param partition_by: (list[str])
+    :param limit: (int)
     """
     source_path: Path = Path(source)
     sink_path: Path = Path(sink)
@@ -254,25 +274,42 @@ def local_convert_csv_to_parquet(
         f"||=> Source Path: {source_path.resolve()}"
         f"||=> Exists or Not: {source_path.exists()}"
         f"||To Parquet file"
-        f"||=> Sick Path: {sink_path.resolve()}"
+        f"||=> Sick Path: {sink_path.resolve()}||"
     )
-
-    lf: pl.LazyFrame = pl.scan_csv(
-        source,
-        include_file_paths="_src_path",
-    )
-
-    # STEP 02: Schema conversion on Polars DataFrame.
-    conversion: dict[str, Any] = conversion or {}
-    if conversion:
-        lf = lf.with_columns(
-            *[pl.col(c).cast(col.type).alias(col.name) for c, col in conversion]
+    lf: pl.LazyFrame = (
+        pl.scan_csv(
+            source,
+            has_header=True,
+            include_file_paths="_src",
         )
+        .pipe(
+            pipe_condition,
+            condition=condition,
+            conversion=conversion,
+        )
+        .with_columns(
+            # NOTE: Convert the audit date to integer for partitioning.
+            (
+                pl.lit(audit_date.strftime("%Y%m%d"))
+                .str.to_integer()
+                .alias("audit_date")
+            ),
+            # NOTE: Sprit only filename from path.
+            (pl.col("_src").str.split("/").list.last().alias("_src")),
+        )
+    )
+
+    result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit).collect()}")
+    row_records: int = len(lf.collect())
+    result.trace.info(f"Start Sink Data with {row_records} records.")
 
     pq.write_to_dataset(
         table=lf.collect().to_arrow(),
         root_path=sink,
-        compression="snappy",
-        basename_template=f"{uuid4().hex}-{{i}}.snappy.parquet",
+        compression=compression,
+        partition_cols=partition_by or [],
+        basename_template=f"{uuid4().hex}-{{i}}.{compression}.parquet",
+        # NOTE: Write as `overwrite` mode.
+        existing_data_behavior="delete_matching",
     )
     return {"records": len(lf.collect())}

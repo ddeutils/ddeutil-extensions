@@ -7,6 +7,8 @@ wf-test-polars-tasks:
     sink:
       desc: "A sink path of local data source."
       type: str
+    audit-date:
+      type: datetime
   jobs:
     csv-job:
       stages:
@@ -30,6 +32,8 @@ wf-test-polars-tasks:
           with:
             source: ${{ params.source }}
             sink: ${{ params.sink }}
+            audit_date: ${{ params.audit-date }}
+            partition_by: ["audit_date"]
 
     excel-job:
       stages:
@@ -46,3 +50,18 @@ wf-test-polars-tasks:
           with:
             source: ${{ params.source }}
             sink: ${{ params.sink }}
+            audit_date: ${{ params.audit-date }}
+            partition_by: ["audit_date"]
+            conversion: |
+              CAST(`Index` AS INT) as id,
+              `Customer Id` as cust_id,
+              `First Name` as first_name,
+              `Last Name` as last_name,
+              `Company` as company,
+              `City` as city,
+              `Country` as country,
+              `Phone 1` as phone_1,
+              `Phone 2` as phone_2,
+              `Email` as email,
+              `Subscription Date` as subscription_Date,
+              `Website` as website

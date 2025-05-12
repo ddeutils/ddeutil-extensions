@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ddeutil.workflow import Result, Stage, Workflow
 
 
@@ -50,7 +52,8 @@ def test_pl_tasks_csv_to_parquet(example_path, target_path):
         params={
             "params": {
                 "source": str(example_path / "demo-file-customers-100.csv"),
-                "target": str(target_path / "demo-file-customers-100"),
+                "sink": str(target_path / "demo-file-customers-100-csv"),
+                "audit-date": datetime(2025, 5, 12),
             },
         },
     )
@@ -67,7 +70,8 @@ def test_pl_tasks_excel_to_parquet(example_path, target_path):
         params={
             "params": {
                 "source": str(example_path / "demo-file.xlsx"),
-                "sink": str(target_path / "demo-file-customers-100"),
+                "sink": str(target_path / "demo-file-customers-100-excel"),
+                "audit-date": datetime(2025, 5, 12),
             },
         },
     )
