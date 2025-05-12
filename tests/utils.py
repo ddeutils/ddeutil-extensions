@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
@@ -7,10 +8,15 @@ from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 OUTSIDE_PATH: Path = Path(__file__).parent.parent
+DEFAULT_TZ: str = "Asia/Bangkok"
 
 
 def dotenv_setting() -> None:
     env_path: Path = OUTSIDE_PATH / ".env"
+
+    # NOTE: Get pre-defined secret value when use GH Action.
+    sftp_pass: str = os.getenv("SFTP_PASSWORD", "P@ssW0rd")
+
     if not env_path.exists():
         logging.warning("Dot env file does not exists")
         # NOTE: for ROOT_PATH value on the different OS:
@@ -23,7 +29,7 @@ def dotenv_setting() -> None:
 
             SFTP_HOST='50.100.200.123'
             SFTP_USER='bastion'
-            SFTP_PASSWORD='P@ssW0rd'
+            SFTP_PASSWORD='{sftp_pass}'
 
             AWS_ACCESS_ID='dummy_access_id'
             AWS_ACCESS_SECRET_KEY='dummy_access_secret_key'
@@ -43,4 +49,4 @@ def initial_sqlite() -> None:
 
 
 def str2dt(value: str) -> datetime:
-    return datetime.fromisoformat(value).astimezone(ZoneInfo("Asia/Bangkok"))
+    return datetime.fromisoformat(value).astimezone(ZoneInfo(DEFAULT_TZ))

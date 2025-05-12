@@ -46,6 +46,8 @@ dataframe = [
 ]
 polars = [
     "polars==1.29.0",
+    # NOTE: Read Excel file.
+    "fastexcel==0.14.0",
 ]
 pandas = [
     "pandas==2.2.3",

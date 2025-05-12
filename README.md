@@ -13,6 +13,10 @@ that use for Data _Ingestion_, _Processing_, _Transformation_, and _Quality_.
 pip install -U ddeutil-extensions
 ```
 
+This extension package provides a lot of optional deps:
+
+- `polars`: Polars tasks
+
 ## :rocket: Features
 
 **This Extension Focus:**
