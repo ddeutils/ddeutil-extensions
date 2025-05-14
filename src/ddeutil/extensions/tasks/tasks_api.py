@@ -8,11 +8,15 @@ from __future__ import annotations
 import asyncio
 import os
 import time
+from functools import partial
 from pathlib import Path
 
 import httpx
 import requests
+from ddeutil.workflow import tag
 from requests.auth import HTTPBasicAuth
+
+API_TAG = partial(tag, name="api")
 
 
 def make_request(url, timeout=5.0):
