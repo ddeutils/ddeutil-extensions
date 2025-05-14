@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from functools import partial
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 try:
     import pandas as pd
@@ -15,6 +15,11 @@ except ImportError:
     raise ImportError(
         "Please install pandas if you want to use any relate task"
     ) from None
+
+try:
+    from deltalake import write_deltalake
+except ImportError:
+    write_deltalake = None
 
 from ddeutil.workflow import Result, tag
 
@@ -30,7 +35,7 @@ def local_pd_convert_excel_to_deltalake(
     token: str,
     result: Result,
     header: int = 1,
-    sheet_name: Optional[str] = None,
+    sheet_name: Optional[Union[str, int]] = 0,
     limit: int = 3,
 ) -> DictData:
     """Covert data from Excel to Microsoft Fabric.
@@ -43,13 +48,11 @@ def local_pd_convert_excel_to_deltalake(
     :param sheet_name:
     :param limit: (int)
     """
-    try:
-        from deltalake import write_deltalake
-    except ImportError:
+    if write_deltalake is None:
         raise ImportError(
             "Task `convert-excel-to-fabric` need to install `deltalake` "
             "package before execution."
-        ) from None
+        )
 
     source_path: Path = Path(source)
     result.trace.debug(
@@ -60,8 +63,9 @@ def local_pd_convert_excel_to_deltalake(
         source_path,
         header=header,
         sheet_name=sheet_name,
+        engine="calamine",
     )
-    result.trace.info(f"Display Pandas DataFrame:||{df.limit(limit)}")
+    result.trace.info(f"Display Pandas DataFrame:||{df.head(limit)}")
     row_records: int = len(df)
     write_deltalake(
         sink,

@@ -118,7 +118,7 @@ def local_pl_count_excel_task(
         f"||=> Exists or Not: {source_path.exists()}||"
     )
 
-    df: pl.DataFrame = (
+    lf: pl.LazyFrame = (
         pl.read_excel(
             source,
             sheet_id=sheet_name,
@@ -133,11 +133,8 @@ def local_pl_count_excel_task(
         .pipe(pipe_condition, condition=condition)
     )
 
-    if condition:
-        df: pl.DataFrame = df.sql(f"SELECT * FROM self WHERE {condition}")
-
-    result.trace.info(f"Display Polars DataFrame:||{df.limit(limit)}")
-    record_count: int = len(df)
+    result.trace.info(f"Display Polars DataFrame:||{lf.limit(limit)}")
+    record_count: int = len(lf.collect())
     result.trace.info(f"Records count: {record_count}")
     return {"records": record_count}
 

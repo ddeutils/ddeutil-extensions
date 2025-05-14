@@ -4,16 +4,16 @@ wf-test-pandas-tasks:
     source:
       desc: "A source path of local data source."
       type: str
-    target:
-      desc: "A target path of local data source."
+    sink:
+      desc: "A sink path of local data source."
       type: str
   jobs:
-    fabric-job:
+    first-job:
       stages:
         - name: "Test task"
           id: xlsx-to-fabric-deltalake
-          uses: tasks/xlsx-to-fabric-with-deltalake@pandas
+          uses: tasks/convert-excel-to-fabric@pandas
           with:
-            source: ${{ source }}
-            target: ${{ target }}
-            token: ${{ token }}
+            source: ${{ params.source }}
+            sink: ${{ params.sink }}
+            token: ${{ params.token }}

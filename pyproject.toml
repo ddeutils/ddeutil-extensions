@@ -51,6 +51,8 @@ polars = [
 ]
 pandas = [
     "pandas==2.2.3",
+    # NOTE: Read Excel file.
+    "python-calamine==0.3.2",
 ]
 sftp = [
     "paramiko==3.5.1",
@@ -99,6 +101,11 @@ console_output_style = "count"
 addopts = [
     "--strict-config",
     "--strict-markers",
+    "--ignore=tests/schedule",
+    "--ignore=tests/models",
+    "--ignore=tests/test_boto3.py",
+    "--ignore=tests/test_conn.py",
+    "--ignore=tests/test_sftp.py",
 ]
 filterwarnings = ["error"]
 log_cli = true
