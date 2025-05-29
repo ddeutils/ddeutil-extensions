@@ -49,7 +49,6 @@ from ddeutil.workflow import (
     Loader,
     Result,
     WorkflowException,
-    batch,
     delay,
     dynamic,
     get_audit,
@@ -70,6 +69,7 @@ except ImportError:  # pragma: no cov
 
 from ..__types import DictData, TupleStr
 from .exceptions import ScheduleException
+from .reusables import batch
 from .workflow import Release, ReleaseQueue, Workflow, WorkflowTask
 
 P = ParamSpec("P")
