@@ -26,7 +26,7 @@ classifiers = [
 requires-python = ">=3.9.13"
 dependencies = [
     "fmtutil==1.0.15",
-    "ddeutil-workflow==0.0.63"
+    "ddeutil-workflow==0.0.67"
 ]
 dynamic = ["version"]
 
@@ -38,7 +38,7 @@ Homepage = "https://github.com/ddeutils/ddeutil-extensions/"
 test = [
     "python-dotenv==1.1.0",
     "sqlalchemy==2.0.41",
-    "fsspec==2025.3.2",
+    "fsspec==2025.5.1",
     "ddeutil-extensions[dataframe,sftp,aws,deltalake]",
 ]
 dataframe = [
@@ -59,10 +59,10 @@ sftp = [
     "sshtunnel==0.4.0",
 ]
 aws = [
-    "boto3==1.38.6",
+    "boto3==1.38.27",
 ]
 deltalake = [
-    "deltalake==0.25.5",
+    "deltalake==1.0.1",
 ]
 duckdb = [
     "duckdb==1.2.2",
