@@ -4,18 +4,15 @@
 [![gh license](https://img.shields.io/github/license/ddeutils/ddeutil-extensions)](https://github.com/ddeutils/ddeutil-extensions/blob/main/LICENSE)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-An **Extension Tasks** which provides all plug-ins and objects
-that use for Data _Ingestion_, _Processing_, _Transformation_, and _Quality_.
+An **Extension Tasks** for data pipeline workflow which provides all plug-ins
+and objects that use for Data _Ingestion_, _Processing_, _Transformation_, and
+_Quality_.
 
-## :round_pushpin: Installation
+## 📦 Installation
 
 ```shell
 pip install -U ddeutil-extensions
 ```
-
-This extension package provides a lot of optional deps:
-
-- `polars`: Polars tasks
 
 ## :rocket: Features
 
@@ -26,6 +23,8 @@ This extension package provides a lot of optional deps:
 - Model Datasets
 
 ## Examples
+
+...
 
 ## :speech_balloon: Contribute
 
