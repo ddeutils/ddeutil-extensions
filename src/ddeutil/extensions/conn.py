@@ -11,7 +11,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Any, Literal, Optional, TypeVar
 
-from ddeutil.workflow import Loader
+from ddeutil.workflow import YamlParser
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.functional_validators import field_validator
 from pydantic.types import SecretStr
@@ -125,7 +125,7 @@ class BaseConn(BaseModel):
 
         :rtype: Self
         """
-        loader: Loader = Loader(name, externals=externals)
+        loader = YamlParser(name, externals=externals)
         # NOTE: Validate the config type match with current connection model
         if loader.type != cls:
             raise ValueError(f"Type {loader.type} does not match with {cls}")

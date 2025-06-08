@@ -3,8 +3,3 @@
 # Licensed under the MIT License. See LICENSE in the project root for
 # license information.
 # ------------------------------------------------------------------------------
-from typing import TypedDict
-
-
-class CountResult(TypedDict):
-    records: int

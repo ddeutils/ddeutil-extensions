@@ -76,9 +76,10 @@ class WrapBoto3:
         mfa_optional: dict[str, str] = {}
         if self.mfa_serial:
             mfa_otp: str = str(input("Enter the MFA code: "))
-            mfa_optional = (
-                {"SerialNumber": self.mfa_serial, "TokenCode": mfa_otp},
-            )
+            mfa_optional = {
+                "SerialNumber": self.mfa_serial,
+                "TokenCode": mfa_otp,
+            }
         assumed_role = sts_client.assume_role(
             RoleArn=self.role_arn,
             RoleSessionName=self.role_session_name,

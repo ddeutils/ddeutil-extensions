@@ -33,7 +33,7 @@ from ddeutil.workflow import (
     CronRunner,
     Result,
     Workflow,
-    WorkflowException,
+    WorkflowError,
     clear_tz,
     dynamic,
     gen_id,
@@ -381,7 +381,7 @@ class WorkflowPoke(Workflow):
 
         # VALIDATE: Check the periods value should gather than 0.
         if periods <= 0:
-            raise WorkflowException(
+            raise WorkflowError(
                 "The period of poking should be `int` and grater or equal "
                 "than 1."
             )
@@ -404,7 +404,7 @@ class WorkflowPoke(Workflow):
             start_date = start_date.replace(microsecond=0)
             offset: float = (current_date - start_date).total_seconds()
         else:
-            raise WorkflowException(
+            raise WorkflowError(
                 f"The start datetime should less than or equal the current "
                 f"datetime, {current_date:%Y-%m-%d %H:%M:%S}."
             )
