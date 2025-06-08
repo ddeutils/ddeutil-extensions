@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from ddeutil.workflow import Result, Stage, Workflow
+from ddeutil.workflow import SUCCESS, Result, Stage, Workflow
 
 
 def test_pl_tasks_excel(example_path):
@@ -11,7 +11,7 @@ def test_pl_tasks_excel(example_path):
             "params": {"source": str(example_path / "demo-file.xlsx")},
         }
     )
-    assert rs.context == {"records": 100}
+    assert rs.context == {"records": 100, "status": SUCCESS}
 
     stage: Stage = workflow.job("excel-job").stage("count-excel")
     rs: Result = stage.handler_execute(
@@ -19,7 +19,7 @@ def test_pl_tasks_excel(example_path):
             "params": {"source": str(example_path / "demo-file-empty.xlsx")},
         },
     )
-    assert rs.context == {"records": 0}
+    assert rs.context == {"records": 0, "status": SUCCESS}
 
 
 def test_pl_tasks_csv(example_path):
@@ -32,7 +32,7 @@ def test_pl_tasks_csv(example_path):
             },
         }
     )
-    assert rs.context == {"records": 100}
+    assert rs.context == {"records": 100, "status": SUCCESS}
 
     stage: Stage = workflow.job("csv-job").stage("count-condition-csv")
     rs: Result = stage.handler_execute(
@@ -42,7 +42,7 @@ def test_pl_tasks_csv(example_path):
             },
         }
     )
-    assert rs.context == {"records": 1}
+    assert rs.context == {"records": 1, "status": SUCCESS}
 
 
 def test_pl_tasks_csv_to_parquet(example_path, target_path):

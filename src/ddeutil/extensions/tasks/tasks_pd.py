@@ -7,23 +7,19 @@ from __future__ import annotations
 
 from functools import partial
 from pathlib import Path
-from typing import Optional, Union
-
-try:
-    import pandas as pd
-except ImportError:
-    raise ImportError(
-        "Please install pandas if you want to use any relate task"
-    ) from None
-
-try:
-    from deltalake import write_deltalake
-except ImportError:
-    write_deltalake = None
+from typing import TYPE_CHECKING, Optional, Union
 
 from ddeutil.workflow import Result, tag
 
 from ..__types import DictData
+from ..utils import Lazy
+
+if TYPE_CHECKING:
+    import deltalake as dl
+    import pandas as pd
+else:
+    pd = Lazy("pandas")
+    dl = Lazy("deltalake")
 
 PANDAS_TAG = partial(tag, name="pandas")
 
@@ -48,12 +44,6 @@ def local_pd_convert_excel_to_deltalake(
     :param sheet_name:
     :param limit: (int)
     """
-    if write_deltalake is None:
-        raise ImportError(
-            "Task `convert-excel-to-fabric` need to install `deltalake` "
-            "package before execution."
-        )
-
     source_path: Path = Path(source)
     result.trace.debug(
         "... [CALLER]: Loading xlsx file via Pandas Dataframe API"
@@ -67,11 +57,10 @@ def local_pd_convert_excel_to_deltalake(
     )
     result.trace.info(f"Display Pandas DataFrame:||{df.head(limit)}")
     row_records: int = len(df)
-    write_deltalake(
+    dl.write_deltalake(
         sink,
         data=df,
         mode="overwrite",
-        engine="rust",
         storage_options={
             "use_fabric_endpoint": "true",
             "allow_unsafe_rename": "true",

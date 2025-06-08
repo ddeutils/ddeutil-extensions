@@ -53,15 +53,15 @@ wf-test-polars-tasks:
             audit_date: ${{ params.audit-date }}
             partition_by: ["audit_date"]
             conversion: |
-              CAST(`Index` AS INT) as id,
-              `Customer Id` as cust_id,
-              `First Name` as first_name,
-              `Last Name` as last_name,
-              `Company` as company,
-              `City` as city,
-              `Country` as country,
-              `Phone 1` as phone_1,
-              `Phone 2` as phone_2,
-              `Email` as email,
-              `Subscription Date` as subscription_Date,
-              `Website` as website
+              CAST(`Index` AS INT)    AS id
+              , `Customer Id`         AS cust_id
+              , `First Name`          AS first_name
+              , `Last Name`           AS last_name
+              , `Company`             AS company
+              , `City`                AS city
+              , `Country`             AS country
+              , `Phone 1`             AS phone_1
+              , `Phone 2`             AS phone_2
+              , `Email`               AS email
+              , `Subscription Date`   AS subscription_Date
+              , `Website`             AS website

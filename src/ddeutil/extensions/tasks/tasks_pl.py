@@ -8,21 +8,20 @@ from __future__ import annotations
 from datetime import datetime
 from functools import partial
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from uuid import uuid4
-
-try:
-    import polars as pl
-except ImportError:
-    raise ImportError(
-        "Please install polars if you want to use any relate task"
-    ) from None
 
 from ddeutil.workflow import Result, tag
 
 from ..__types import DictData
+from ..utils import Lazy
 from .models import CountResult
 from .utils.utils_polars import pipe_condition
+
+if TYPE_CHECKING:
+    import polars as pl
+else:
+    pl = Lazy("polars")
 
 POLARS_TAG = partial(tag, name="polars")
 

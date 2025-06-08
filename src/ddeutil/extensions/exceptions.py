@@ -4,3 +4,6 @@
 # license information.
 # ------------------------------------------------------------------------------
 class BaseExtensionError(Exception): ...
+
+
+class LazyImportError(BaseExtensionError): ...
