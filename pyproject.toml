@@ -36,7 +36,7 @@ Homepage = "https://github.com/ddeutils/ddeutil-extensions/"
 
 [project.optional-dependencies]
 test = [
-    "python-dotenv==1.1.0",
+    "python-dotenv==1.1.1",
     "sqlalchemy==2.0.41",
     "fsspec==2025.5.1",
     "ddeutil-extensions[dataframe,sftp,aws,deltalake]",
