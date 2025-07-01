@@ -59,7 +59,7 @@ sftp = [
     "sshtunnel==0.4.0",
 ]
 aws = [
-    "boto3==1.38.27",
+    "boto3==1.39.0",
 ]
 deltalake = [
     "deltalake==1.0.1",
